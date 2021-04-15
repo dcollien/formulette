@@ -36,7 +36,7 @@ export const Parameter: React.FC<ParameterProps> = ({
     if (typeof evaluated === "string") {
       return <>{evaluated}</>;
     } else {
-      return <>JSON.stringify(evaluated)</>;
+      return <>{JSON.stringify(evaluated)}</>;
     }
   } else if (parameter.type ===  "function") {
     return null;

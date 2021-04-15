@@ -19,12 +19,12 @@ const Template: Story<FormuletteProps> = (args: unknown) => {
   const [error, setError] = useState<Error>(null);
 
   const onChange = (name: string, value: unknown) => {
-    setValues({ ...values, [name]: value });
+    // setValues({ ...values, [name]: value });
   };
 
   const onError = (err: Error) => {
     console.log(err);
-    setError(err);
+    // setError(err);
   };
 
   return (
@@ -47,7 +47,7 @@ ExampleA.args = {
 
 \${x} = \${yyy}
 
-$$ \\sqrt{\\evalb{yyy}} = \\evalb{z} $$
+$$ \\sqrt{\\eval{yyy}} = \\eval{z} $$
 
 `,
   parameters: {
@@ -78,7 +78,6 @@ $$a=\\eval{inputa}$$
 $$b=\\eval{inputb}$$
 $$c=\\eval{inputc}$$
 
-$$x=\\frac{-\\eval{b}\\pm \\sqrt{\\eval{b}^2-4\\eval{a}\\eval{c}}}{2\\eval{a}}$$
 $$x=\\eval{xPos} \\text{or} \\eval{xNeg}$$
 `,
   parameters: {
@@ -102,23 +101,23 @@ $$x=\\eval{xPos} \\text{or} \\eval{xNeg}$$
     },
     a: {
       type: "calculation",
-      expression: "a",
+      expression: "inputa",
     },
     b: {
       type: "calculation",
-      expression: "b",
+      expression: "inputb",
     },
     c: {
       type: "calculation",
-      expression: "c",
+      expression: "inputc",
     },
     xPos: {
       type: "calculation",
-      expression: "(-b + (4 * sqrt(b^2 - 4 * a * c))/(2 * a)",
+      expression: "-b + (4 * sqrt(b^2 - 4 * a * c))/(2 * a)",
     },
     xNeg: {
       type: "calculation",
-      expression: "(-b - (4 * sqrt(b^2 - 4 * a * c))/(2 * a)",
+      expression: "-b - (4 * sqrt(b^2 - 4 * a * c))/(2 * a)",
     },
   },
 };
