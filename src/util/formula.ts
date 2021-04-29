@@ -3,29 +3,46 @@ import { ExpressionValue } from "expressionparser/dist/ExpressionParser";
 
 import { Parameters, Values } from "./types";
 
-const initTermEvaluator = (parameters: Parameters, values: Values) => (
-  term: string
-): ExpressionValue => {
-  let defaultValue;
+export const initParser = (parameters: Parameters, values: Values): ExpressionParser => {
+  let parser: ExpressionParser | null = null;
 
-  if (term in parameters) {
-    const parameter = parameters[term];
-
-    if (parameter.type === "constant") {
-      return parameter.value as ExpressionValue;
-    } else if (parameter.type === "function") {
-      return term;
-    } else if (parameter.type === "input") {
-      defaultValue = parameter.default;
-    }
-  }
+  const evaluator = (
+    term: string
+  ): ExpressionValue => {
+    let defaultValue;
   
-  if (term in values && values[term] !== undefined) {
-    return values[term] as ExpressionValue;
-  }
+    if (term in parameters) {
+      const parameter = parameters[term];
+  
+      if (parameter.type === "constant") {
+        return parameter.value as ExpressionValue;
+      } else if (parameter.type === "function") {
+        return term;
+      } else if (parameter.type === "input") {
+        defaultValue = parameter.default;
+      } else if (parameter.type === "calculation") {
+        if (parser !== null) {
+          const result = parser.expressionToValue(parameter.expression);
+          console.log(result);
+          return result;
+        } else {
+          throw new Error("Not initialised");
+        }
+      }
+    }
+    
+    if (term in values && values[term] !== undefined) {
+      return values[term] as ExpressionValue;
+    }
+  
+    if (defaultValue === undefined) {
+      throw new Error("Invalid term"); 
+    }
+  
+    return defaultValue;
+  };
 
-  return defaultValue;
+  parser = init(formula, evaluator);
+
+  return parser;
 };
-
-export const initParser = (parameters: Parameters, values: Values): ExpressionParser =>
-  init(formula, initTermEvaluator(parameters, values));

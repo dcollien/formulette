@@ -16,15 +16,15 @@ export default {
 
 const Template: Story<FormuletteProps> = (args: unknown) => {
   const [values, setValues] = useState<Values>({});
-  const [error, setError] = useState<Error>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   const onChange = (name: string, value: unknown) => {
-    // setValues({ ...values, [name]: value });
+    setValues({ ...values, [name]: value });
   };
 
   const onError = (err: Error) => {
     console.log(err);
-    // setError(err);
+    setError(err);
   };
 
   return (
@@ -78,7 +78,7 @@ $$a=\\eval{inputa}$$
 $$b=\\eval{inputb}$$
 $$c=\\eval{inputc}$$
 
-$$x=\\eval{xPos} \\text{or} \\eval{xNeg}$$
+$$x=\\eval{xPos} \\text{ or } \\eval{xNeg}$$
 `,
   parameters: {
     inputa: {
@@ -113,11 +113,11 @@ $$x=\\eval{xPos} \\text{or} \\eval{xNeg}$$
     },
     xPos: {
       type: "calculation",
-      expression: "-b + (4 * sqrt(b^2 - 4 * a * c))/(2 * a)",
+      expression: "(-b + sqrt(b^2 - 4 * a * c))/(2 * a)",
     },
     xNeg: {
       type: "calculation",
-      expression: "-b - (4 * sqrt(b^2 - 4 * a * c))/(2 * a)",
+      expression: "(-b - sqrt(b^2 - 4 * a * c))/(2 * a)",
     },
   },
 };

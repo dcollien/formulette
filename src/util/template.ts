@@ -18,10 +18,15 @@ const variableRenderer = (
     return parameter.value + "";
   } else if (parameter.type === "calculation") {
     const evaluated = parser.expressionToValue(parameter.expression);
+    console.log("EVALED", evaluated);
     if (typeof evaluated === "string") {
       return evaluated;
-    } else {
+    } else if (isNaN(evaluated)) {
+      return "?";
+    } else if (evaluated !== null) {
       return JSON.stringify(evaluated);
+    } else {
+      return "?";
     }
   } else {
     return inputRenderer();
@@ -55,9 +60,8 @@ export const initKatexMacros = (
 
     const parameter = parameters[name];
 
-    console.log(context);
-    console.log(args);
-    console.log(name);
+    console.log("XXX");
+    console.log(name, parameter);
 
     if (parameter === undefined) {
       throw new Error(`${name} is not defined`);

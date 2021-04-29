@@ -27,19 +27,19 @@ export const Parameter: React.FC<ParameterProps> = ({
   node,
   onChange,
 }: ParameterProps) => {
-
   // TODO: convert node and child to react
   if (parameter.type === "constant") {
     return <>{parameter.value + ""}</>;
   } else if (parameter.type === "calculation") {
     const evaluated = parser.expressionToValue(parameter.expression);
+    console.log("EVAL", evaluated);
     if (typeof evaluated === "string") {
       return <>{evaluated}</>;
     } else {
       return <>{JSON.stringify(evaluated)}</>;
     }
   } else if (parameter.type ===  "function") {
-    return null;
+    return <>f</>;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -109,6 +109,6 @@ export const Parameter: React.FC<ParameterProps> = ({
       <textarea value={value as string} onChange={handleTextChange}></textarea>
     );
   } else {
-    return null;
+    return <>?</>;
   }
 };

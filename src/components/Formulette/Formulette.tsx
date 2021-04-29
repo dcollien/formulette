@@ -104,7 +104,6 @@ export const Formulette: React.FC<FormuletteProps> = ({
           />
         );
       }
-
       return;
     },
   };
