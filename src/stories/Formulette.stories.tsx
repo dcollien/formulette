@@ -50,7 +50,7 @@ SquareRoot.args = {
 
 \${x} = \${yyy}
 
-$$ \\sqrt{\\eval{yyy}} = \\eval{z} $$
+$$ \\sqrt{\\\${yyy}} = \\\${z} $$
 
 `,
   parameters: {
@@ -124,8 +124,8 @@ QuadraticFormula.args = {
 export const RandomSquareRoot = Template.bind({});
 RandomSquareRoot.args = {
   template: String.raw`
-$$ x = \frac{\sqrt{\eval{in}} + 5}{2} $$
-$$ x = \eval{out} $$
+$$ x = \frac{\sqrt{\${in}} + 5}{2} $$
+$$ x = \${out} $$
 `,
   parameters: {
     in: {

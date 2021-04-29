@@ -47,8 +47,8 @@ export const initKatexMacros = (
   parameters: Parameters,
   parser?: ExpressionParser,
   options?: Options
-): KatexMacros => ({
-  "\\eval": (context: Context) => {
+): KatexMacros => {
+  const template = (context: Context) => {
     const args = context.consumeArgs(1)[0];
 
     let name: string;
@@ -72,8 +72,13 @@ export const initKatexMacros = (
     } else {
       return `\\href{#eval-${name}}{${name}}`;
     }
-  },
-});
+  };
+
+  return {
+    "\\eval": template,
+    "\\$": template
+  }
+};
 
 type TextMacro = (name: string) => string;
 
