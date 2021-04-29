@@ -49,12 +49,12 @@ export const Formulette: React.FC<FormuletteProps> = ({
 
   const textMacro = useMemo(() => {
     try {
-      return initTextMacro(parameters);
+      return initTextMacro(parameters, parser, options);
     } catch (err) {
       onError && onError(err);
       return;
     }
-  }, [parameters, onError]);
+  }, [parameters, onError, parser, options]);
 
   const katexMacros = useMemo(() => {
     try {

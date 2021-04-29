@@ -1,6 +1,8 @@
 import { ExpressionParser } from "expressionparser";
 import katex from "katex";
-import marked from "marked";
+import MarkdownIt from "markdown-it";
+import vis from "markvis";
+import * as d3 from "d3";
 
 import { Options, Parameters } from "./types";
 
@@ -14,6 +16,12 @@ const fixLatex = (inLatex: string) =>
   inLatex
     .replace("\\begin{align}", "\\begin{aligned}")
     .replace("\\end{align}", "\\end{aligned}");
+
+const md = new MarkdownIt({
+  html: true,
+  linkify: true,
+  typographer: true
+}).use(vis);
 
 export const renderEvaluation = (parser: ExpressionParser | undefined, expression: string, options?: Options): string => {
   if (!parser) throw new Error("Parser Uninitialised");
@@ -83,7 +91,9 @@ export const initKatexMacros = (
 type TextMacro = (name: string) => string;
 
 export const initTextMacro = (
-  parameters: Parameters
+  parameters: Parameters,
+  parser?: ExpressionParser,
+  options?: Options
 ): TextMacro => (name: string) => {
   const parameter = parameters[name];
 
@@ -91,7 +101,11 @@ export const initTextMacro = (
     throw new Error(`${name} is not defined`);
   }
 
-  return `<a href="#eval-${name}">${name}</a>`;
+  if (parameter.type === "calculation") {
+    return renderEvaluation(parser, parameter.expression, options);
+  } else {
+    return `<a href="#eval-${name}">${name}</a>`;
+  }
 };
 
 const renderTextSection = (
@@ -119,7 +133,7 @@ const renderTextSection = (
 
   // Markdown parse the document
   const renderedVariables = inlineChunks.join("");
-  return marked(renderedVariables);
+  return md.render(renderedVariables, { d3 });
 };
 
 // Render the template text to HTML, including equations and placeholders

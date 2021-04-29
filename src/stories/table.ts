@@ -9,6 +9,15 @@ const args: FormuletteProps = {
   | Bob           | \${a2}        |  \${h2}   |
   | Colin         | \${a3}        |  \${h3}   |
   |**Average**    | **\${avgA}**  | **\${avgH}**  |
+
+\`\`\`vis
+  layout: bar
+  data: [
+    { key: "Agnes", value: \${va1} },
+    { key: "Bob", value: \${va2} },
+    { key: "Colin", value: \${va3} },
+  ]
+\`\`\`
 `,
   parameters: {
     "a1": {
@@ -58,6 +67,18 @@ const args: FormuletteProps = {
     "avgH": {
       type: "calculation",
       expression: "round(100*(h1 + h2 + h3)/3)/100"
+    },
+    "va1": {
+      type: "calculation",
+      expression: "a1"
+    },
+    "va2": {
+      type: "calculation",
+      expression: "a2"
+    },
+    "va3": {
+      type: "calculation",
+      expression: "a3"
     }
   }
 };
