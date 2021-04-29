@@ -20,10 +20,10 @@ export const Spinner: React.FC<SpinnerProps> = ({
       let min = parameter.range.min.value;
 
       if (parameter.range.type === "integer") {
-        const isMaxInclusive = parameter.range.max.inclusive === true; // default false
-        const isMinInclusive = parameter.range.max.inclusive !== false; // default true
+        const isMaxInclusive = parameter.range.max.inclusive === undefined ? false : parameter.range.max.inclusive;
+        const isMinInclusive = parameter.range.min.inclusive === undefined ? true  : parameter.range.min.inclusive;
 
-        max -= isMaxInclusive ? 0 : 1;
+        max += isMaxInclusive ? 1 : 0;
         min += isMinInclusive ? 0 : 1;
 
         onChange(Math.floor(p * (max - min) + min));
@@ -37,15 +37,15 @@ export const Spinner: React.FC<SpinnerProps> = ({
   };
 
   return (
-    <div className="random-spinner">
+    <span className="random-spinner">
       {value !== undefined ? (
         <span className="chosen-value">{value}</span>
       ) : (
         <span className="chosen-value">&nbsp;</span>
       )}
       <button type="button" onClick={onClick} title="Randomise">
-        🎲
+        <span role="img" aria-label="Random Die">🎲</span>
       </button>
-    </div>
+    </span>
   );
 };

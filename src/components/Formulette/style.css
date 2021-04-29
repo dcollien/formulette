@@ -1,3 +1,12 @@
 .formulette {
   font-family: sans-serif;
 }
+
+.random-spinner .chosen-value {
+  padding-right: 4px;
+  color: blue;
+}
+
+.random-spinner button {
+  cursor: pointer;
+}

@@ -69,3 +69,9 @@ export type ParameterDefinition =
 
 export type Parameters = Record<string, ParameterDefinition>;
 export type Values = Record<string, VariableValue>;
+
+export type Options = {
+  nullLabel?: string;
+  undefinedLabel?: string;
+  nanLabel?: string
+};

@@ -7,15 +7,20 @@ import {
   isChoiceInputDefinition,
   isRandomInputDefinition,
   ParameterDefinition,
+  Options
 } from "../../util/types";
-import { Spinner } from "./Spinner";
 
+import { renderEvaluation } from "../../util/template";
+
+
+import { Spinner } from "./Spinner";
 export interface ParameterProps {
   name: string;
   value: VariableValue;
   parameter: ParameterDefinition;
   parser: ExpressionParser;
   onChange: (value?: VariableValue) => void;
+  options?: Options;
 }
 
 export const Parameter: React.FC<ParameterProps> = ({
@@ -24,6 +29,7 @@ export const Parameter: React.FC<ParameterProps> = ({
   parameter,
   parser,
   onChange,
+  options
 }: ParameterProps) => {
 
   // TODO: convert node and child to react
@@ -31,18 +37,8 @@ export const Parameter: React.FC<ParameterProps> = ({
     return <>{parameter.value + ""}</>;
   } else if (parameter.type === "calculation") {
     try {
-      const evaluated = parser.expressionToValue(parameter.expression);
-      if (typeof evaluated === "string") {
-        return <>{evaluated}</>;
-      } else if (evaluated === null) {
-        return <>Null</>;
-      } else if (typeof(evaluated) === 'number' && isNaN(evaluated)) {
-        return <>NaN</>;
-      } else if (evaluated === undefined) {
-        return <>Undefined</>;
-      } else {
-        return <>{JSON.stringify(evaluated)}</>;
-      }
+      const evaluated = renderEvaluation(parser, parameter.expression, options);
+      return <>{evaluated}</>;
     } catch (err) {
       return <>?</>;
     }
@@ -100,13 +96,13 @@ export const Parameter: React.FC<ParameterProps> = ({
     );
   } else if (isRandomInputDefinition(parameter)) {
     return (
-      <div style={style}>
+      <span style={style}>
         <Spinner
           value={value as string | number | undefined}
           onChange={handleValueChange}
           parameter={parameter}
         />
-      </div>
+      </span>
     );
   } else if (parameter.inputType === "number") {
     return (

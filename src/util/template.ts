@@ -1,7 +1,8 @@
+import { ExpressionParser } from "expressionparser";
 import katex from "katex";
 import marked from "marked";
 
-import { Parameters } from "./types";
+import { Options, Parameters } from "./types";
 
 interface Context {
   consumeArgs: (numArgs: number) => { text: string }[][];
@@ -14,8 +15,38 @@ const fixLatex = (inLatex: string) =>
     .replace("\\begin{align}", "\\begin{aligned}")
     .replace("\\end{align}", "\\end{aligned}");
 
+export const renderEvaluation = (parser: ExpressionParser | undefined, expression: string, options?: Options): string => {
+  if (!parser) throw new Error("Parser Uninitialised");
+
+  const evaluated = parser.expressionToValue(expression);
+  if (typeof evaluated === "string") {
+    return evaluated;
+  } else if (evaluated === null) {
+    return options?.nullLabel || "Null";
+  } else if (typeof(evaluated) === 'number' && isNaN(evaluated)) {
+    return options?.nanLabel || "NaN";
+  } else if (evaluated === undefined) {
+    return options?.undefinedLabel || "Undefined";
+  } else {
+    return JSON.stringify(evaluated);
+  }
+};
+
+export const evaluateTags = (html: string, parameters: Parameters, parser: ExpressionParser | undefined, options?: Options): string => {
+  return html.replace(/<a href="#eval-(\w+)">\w+<\/a>/gm, (_match, name) => {
+    const parameter = parameters[name];
+    
+    if (!parameter || parameter.type !== "calculation") {
+      throw new Error("Attempting to evaluate non-calculation");
+    }
+    return renderEvaluation(parser, parameter.expression, options)
+  });
+};
+
 export const initKatexMacros = (
-  parameters: Parameters
+  parameters: Parameters,
+  parser?: ExpressionParser,
+  options?: Options
 ): KatexMacros => ({
   "\\eval": (context: Context) => {
     const args = context.consumeArgs(1)[0];
@@ -36,7 +67,11 @@ export const initKatexMacros = (
       throw new Error(`${name} is not defined`);
     }
 
-    return `\\href{#eval-${name}}{${name}}`;
+    if (parameter.type === "calculation") {
+      return renderEvaluation(parser, parameter.expression, options);
+    } else {
+      return `\\href{#eval-${name}}{${name}}`;
+    }
   },
 });
 
@@ -88,7 +123,7 @@ export const renderTemplate = (
   katexMacros: KatexMacros,
   renderVariable: TextMacro
 ): string => {
-  const blockChunks = template.split(/\$\$(.+)?\$\$/g);
+  const blockChunks = template.split("$$");
 
   for (let i = 0; i < blockChunks.length; i++) {
     if (i % 2 === 0) {

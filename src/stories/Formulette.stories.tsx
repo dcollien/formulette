@@ -7,41 +7,43 @@ import {
   FormuletteProps,
 } from "../components/Formulette/Formulette";
 import { useState } from "react";
-import { Values } from "../util/types";
+import { RandomInputDefinition, Values } from "../util/types";
+
+import quadratic from "./quadratic.txt";
+import rot13 from './rot13';
 
 export default {
   title: "Formulette",
   component: Formulette,
 } as Meta;
 
-const Template: Story<FormuletteProps> = (args: unknown) => {
+const Template: Story<FormuletteProps> = (args) => {
   const [values, setValues] = useState<Values>({});
-  const [error, setError] = useState<Error | null>(null);
 
-  const onChange = (name: string, value: unknown) => {
+  const onChange = (name: string, value: any) => {
     setValues({ ...values, [name]: value });
   };
 
   const onError = (err: Error) => {
     console.log(err);
-    setError(err);
   };
 
   return (
     <>
       <Formulette
-        {...args}
+        template={args.template}
+        parameters={args.parameters}
         onChange={onChange}
         onError={onError}
         values={values}
+        options={args.options}
       />
-      {error && <pre>{error.toString()}</pre>}
     </>
   );
 };
 
-export const ExampleA = Template.bind({});
-ExampleA.args = {
+export const SquareRoot = Template.bind({});
+SquareRoot.args = {
   template: `
 # Test
 
@@ -69,17 +71,9 @@ $$ \\sqrt{\\eval{yyy}} = \\eval{z} $$
   },
 };
 
-export const ExampleB = Template.bind({});
-ExampleB.args = {
-  template: `
-$$x=\\frac{-b\\pm \\sqrt{b^2-4ac}}{2a}$$
-
-$$a=\\eval{inputa}$$
-$$b=\\eval{inputb}$$
-$$c=\\eval{inputc}$$
-
-$$x=\\eval{xPos} \\text{ or } \\eval{xNeg}$$
-`,
+export const QuadraticFormula = Template.bind({});
+QuadraticFormula.args = {
+  template: quadratic,
   parameters: {
     inputa: {
       type: "input",
@@ -120,4 +114,42 @@ $$x=\\eval{xPos} \\text{ or } \\eval{xNeg}$$
       expression: "(-b - sqrt(b^2 - 4 * a * c))/(2 * a)",
     },
   },
+  options: {
+    nanLabel: "?"
+  }
 };
+
+
+export const RandomSquareRoot = Template.bind({});
+RandomSquareRoot.args = {
+  template: String.raw`
+$$ x = \frac{\sqrt{\eval{in}} + 5}{2} $$
+$$ x = \eval{out} $$
+`,
+  parameters: {
+    in: {
+      type: "input",
+      inputType: "random",
+      width: 100,
+      range: {
+        min: {
+          value: 0,
+          inclusive: true
+        },
+        max: {
+          value: 10,
+          inclusive: true
+        },
+        type: "integer"
+      },
+      default: 0,
+    } as RandomInputDefinition,
+    out: {
+      type: "calculation",
+      expression: "(SQRT(in) + 5)/2",
+    },
+  },
+};
+
+export const Rot13 = Template.bind({});
+Rot13.args = rot13;
