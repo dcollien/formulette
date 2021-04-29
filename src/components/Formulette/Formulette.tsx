@@ -1,7 +1,8 @@
 import React, { useMemo } from "react";
 import "./style.css";
 
-import ReactHtmlParser, { Node } from "react-html-parser";
+import ReactHtmlParser from "react-html-parser";
+import { DomElement } from "domhandler";
 
 import { stripHTML } from "../../util/html";
 import { VariableValue, Parameters, Values } from "../../util/types";
@@ -45,7 +46,7 @@ export const Formulette: React.FC<FormuletteProps> = ({
 
   const textMacro = useMemo(() => {
     try {
-      return initTextMacro(parameters, parser);
+      return initTextMacro(parameters);
     } catch (err) {
       onError(err);
       return;
@@ -54,7 +55,7 @@ export const Formulette: React.FC<FormuletteProps> = ({
 
   const katexMacros = useMemo(() => {
     try {
-      return initKatexMacros(parameters, parser);
+      return initKatexMacros(parameters);
     } catch (err) {
       onError(err);
       return;
@@ -70,6 +71,12 @@ export const Formulette: React.FC<FormuletteProps> = ({
   let renderedTemplate;
 
   try {
+    if (katexMacros === undefined || textMacro === undefined) {
+      throw new Error("Macros Uninitialised");
+    }
+    if (parser === undefined) {
+      throw new Error("Parser Uninitialised");
+    }
     renderedTemplate = renderTemplate(strippedTemplate, katexMacros, textMacro);
   } catch (err) {
     onError(err);
@@ -77,23 +84,10 @@ export const Formulette: React.FC<FormuletteProps> = ({
   }
 
   const htmlOptions = {
-    transform: (node: Node, index: number) => {
-      if (node.type === "tag" && node.attribs["data-type"] === "var") {
-        const name = node.attribs["data-name"];
-        return (
-          <Parameter
-            key={`${name}-${index}`}
-            name={name}
-            value={values[name]}
-            parser={parser}
-            node={node}
-            onChange={changeHandler(name)}
-            parameter={parameters[name]}
-          />
-        );
-      } else if (node.type === "tag" && node.name === "a") {
-        const name = node.attribs.href.replace("#eval-", "");
-        return (
+    transform: (node: DomElement, index: number) => {
+      if (node.type === "tag" && node.name === "a") {
+        const name = node.attribs?.href?.replace("#eval-", "") || "";
+        return parser ? (
           <Parameter
             key={`${name}-${index}`}
             name={name}
@@ -102,7 +96,7 @@ export const Formulette: React.FC<FormuletteProps> = ({
             onChange={changeHandler(name)}
             parameter={parameters[name]}
           />
-        );
+        ) : <>{name}</>;
       }
       return;
     },

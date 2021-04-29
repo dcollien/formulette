@@ -1,37 +1,11 @@
 import katex from "katex";
 import marked from "marked";
 
-import { ExpressionParser } from "expressionparser";
-
-import { ParameterDefinition, Parameters } from "./types";
+import { Parameters } from "./types";
 
 interface Context {
   consumeArgs: (numArgs: number) => { text: string }[][];
 }
-
-const variableRenderer = (
-  parameter: ParameterDefinition,
-  parser: ExpressionParser,
-  inputRenderer: () => string
-) => {
-  if (parameter.type === "constant") {
-    return parameter.value + "";
-  } else if (parameter.type === "calculation") {
-    const evaluated = parser.expressionToValue(parameter.expression);
-    console.log("EVALED", evaluated);
-    if (typeof evaluated === "string") {
-      return evaluated;
-    } else if (isNaN(evaluated)) {
-      return "?";
-    } else if (evaluated !== null) {
-      return JSON.stringify(evaluated);
-    } else {
-      return "?";
-    }
-  } else {
-    return inputRenderer();
-  }
-};
 
 type KatexMacros = { [name: string]: string | ((context: Context) => string) };
 
@@ -41,10 +15,8 @@ const fixLatex = (inLatex: string) =>
     .replace("\\end{align}", "\\end{aligned}");
 
 export const initKatexMacros = (
-  parameters: Parameters,
-  parser: ExpressionParser
+  parameters: Parameters
 ): KatexMacros => ({
-  "\\evalb": "\\htmlData{type=var, name=#1}{#1}",
   "\\eval": (context: Context) => {
     const args = context.consumeArgs(1)[0];
 
@@ -60,26 +32,18 @@ export const initKatexMacros = (
 
     const parameter = parameters[name];
 
-    console.log("XXX");
-    console.log(name, parameter);
-
     if (parameter === undefined) {
       throw new Error(`${name} is not defined`);
     }
 
-    return variableRenderer(
-      parameter,
-      parser,
-      () => `\\href{#eval-${name}}{${name}}`
-    );
+    return `\\href{#eval-${name}}{${name}}`;
   },
 });
 
 type TextMacro = (name: string) => string;
 
 export const initTextMacro = (
-  parameters: Parameters,
-  parser: ExpressionParser
+  parameters: Parameters
 ): TextMacro => (name: string) => {
   const parameter = parameters[name];
 
@@ -87,11 +51,7 @@ export const initTextMacro = (
     throw new Error(`${name} is not defined`);
   }
 
-  return variableRenderer(
-    parameter,
-    parser,
-    () => `<a href="#eval-${name}">${name}</a>`
-  );
+  return `<a href="#eval-${name}">${name}</a>`;
 };
 
 const renderTextSection = (

@@ -10,6 +10,7 @@ export const initParser = (parameters: Parameters, values: Values): ExpressionPa
     term: string
   ): ExpressionValue => {
     let defaultValue;
+    let paramType;
   
     if (term in parameters) {
       const parameter = parameters[term];
@@ -20,11 +21,10 @@ export const initParser = (parameters: Parameters, values: Values): ExpressionPa
         return term;
       } else if (parameter.type === "input") {
         defaultValue = parameter.default;
+        paramType = parameter.inputType;
       } else if (parameter.type === "calculation") {
         if (parser !== null) {
-          const result = parser.expressionToValue(parameter.expression);
-          console.log(result);
-          return result;
+          return parser.expressionToValue(parameter.expression);
         } else {
           throw new Error("Not initialised");
         }
@@ -32,7 +32,11 @@ export const initParser = (parameters: Parameters, values: Values): ExpressionPa
     }
     
     if (term in values && values[term] !== undefined) {
-      return values[term] as ExpressionValue;
+      if (paramType === "number") {
+        return Number(values[term]);
+      } else {
+        return values[term] as ExpressionValue;
+      }
     }
   
     if (defaultValue === undefined) {

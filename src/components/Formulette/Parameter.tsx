@@ -1,7 +1,6 @@
 import React from "react";
 
 import { ExpressionParser } from "expressionparser";
-import ReactHtmlParser, { Node } from "react-html-parser";
 
 import {
   VariableValue,
@@ -15,31 +14,44 @@ export interface ParameterProps {
   name: string;
   value: VariableValue;
   parameter: ParameterDefinition;
-  node: Node;
   parser: ExpressionParser;
   onChange: (value?: VariableValue) => void;
 }
 
 export const Parameter: React.FC<ParameterProps> = ({
+  name,
   value,
   parameter,
   parser,
-  node,
   onChange,
 }: ParameterProps) => {
+
   // TODO: convert node and child to react
   if (parameter.type === "constant") {
     return <>{parameter.value + ""}</>;
   } else if (parameter.type === "calculation") {
-    const evaluated = parser.expressionToValue(parameter.expression);
-    console.log("EVAL", evaluated);
-    if (typeof evaluated === "string") {
-      return <>{evaluated}</>;
-    } else {
-      return <>{JSON.stringify(evaluated)}</>;
+    try {
+      const evaluated = parser.expressionToValue(parameter.expression);
+      if (typeof evaluated === "string") {
+        return <>{evaluated}</>;
+      } else if (evaluated === null) {
+        return <>Null</>;
+      } else if (typeof(evaluated) === 'number' && isNaN(evaluated)) {
+        return <>NaN</>;
+      } else if (evaluated === undefined) {
+        return <>Undefined</>;
+      } else {
+        return <>{JSON.stringify(evaluated)}</>;
+      }
+    } catch (err) {
+      return <>?</>;
     }
   } else if (parameter.type ===  "function") {
-    return <>f</>;
+    return <>{name}</>;
+  }
+
+  if (value === undefined) {
+    value = parameter.default;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,19 +59,19 @@ export const Parameter: React.FC<ParameterProps> = ({
     onChange(value);
   };
 
-  const handleTextChange = (evt: React.ChangeEvent) => {
+  const handleTextChange = (evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     onChange(evt.currentTarget.value);
   };
 
-  const handleSelectChange = (evt: React.ChangeEvent) => {
+  const handleSelectChange = (evt: React.ChangeEvent<HTMLSelectElement>) => {
     const index = Number(evt.currentTarget.selectedIndex);
     if (isChoiceInputDefinition(parameter)) {
       onChange(parameter.values[index]);
     }
   };
 
-  const handleNumberChange = (evt: React.ChangeEvent) => {
-    onChange(Number(evt.currentTarget.value));
+  const handleNumberChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(evt.currentTarget.value);
   };
 
   const style: Record<string, string | number> = {
@@ -77,6 +89,7 @@ export const Parameter: React.FC<ParameterProps> = ({
         style={style}
         onChange={handleSelectChange}
         value={value as string | number}
+        title={name}
       >
         {parameter.values.map((val: string | number, i: number) => (
           <option key={i} value={val}>
@@ -100,15 +113,16 @@ export const Parameter: React.FC<ParameterProps> = ({
       <input
         type="number"
         style={style}
-        value={value as number}
+        value={value?.toString()}
         onChange={handleNumberChange}
+        title={name}
       ></input>
     );
   } else if (parameter.inputType === "text") {
     return (
-      <textarea value={value as string} onChange={handleTextChange}></textarea>
+      <textarea value={value as string} onChange={handleTextChange} title={name}></textarea>
     );
   } else {
-    return <>?</>;
+    return <>undefined</>;
   }
 };

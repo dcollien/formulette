@@ -27,6 +27,7 @@ export interface InputDefinition {
   inputType: "text" | "number" | "choice" | "random";
   width?: number;
   default?: number | string;
+  values?: Array<number | string>;
 }
 
 export interface RandomInputDefinition extends InputDefinition {
@@ -42,7 +43,7 @@ export interface RandomInputDefinition extends InputDefinition {
       inclusive?: boolean;
     };
   };
-  values?: number[];
+  values?: Array<number | string>;
   default?: number;
 }
 
