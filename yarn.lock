@@ -6499,10 +6499,10 @@ express@^4.17.0, express@^4.17.1:
     utils-merge "1.0.1"
     vary "~1.1.2"
 
-expressionparser@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/expressionparser/-/expressionparser-1.0.4.tgz#e4d1a2a57e020f6396acf263a69e5671da52838d"
-  integrity sha512-YTGNnTeWOTQQE4/mobUYe65lbbwM33raUL4u/YkV3AvOhEf7OIGUt4+9gcrQBomgDtc1aXObjNOh6M4uKs/txA==
+expressionparser@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/expressionparser/-/expressionparser-1.0.5.tgz#ed8a06f7c562e9f3ffd92860e019eeae87d5e233"
+  integrity sha512-zGdgkG1uQjHNepVQJdaL/Hd1Y9ESso+W4rGsmLqSJBhA0gF1P9eb1yUc2cqwGJ6vCuc78MU6t52hgIflZSi0fg==
 
 ext@^1.1.2:
   version "1.4.0"

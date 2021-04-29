@@ -2,11 +2,25 @@
   font-family: sans-serif;
 }
 
-.random-spinner .chosen-value {
+.formulette .random-spinner .chosen-value {
   padding-right: 4px;
   color: blue;
 }
 
-.random-spinner button {
+.formulette .random-spinner button {
   cursor: pointer;
+}
+
+.formulette table {
+  border-collapse: collapse;
+}
+
+.formulette table, td, th {
+  border: 1px solid #aaa;
+  padding: 6px;
+}
+
+
+.formulette th {
+  background-color: #eee;
 }

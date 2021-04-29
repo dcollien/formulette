@@ -25,7 +25,8 @@ export interface CalculationDefinition {
 export interface InputDefinition {
   type: "input";
   inputType: "text" | "number" | "choice" | "random";
-  width?: number;
+  width?: number | string;
+  height?: number;
   default?: number | string;
   values?: Array<number | string>;
 }

@@ -41,6 +41,8 @@ export const initParser = (parameters: Parameters, values: Values): ExpressionPa
             throw new Error("Not initialised");
           }
 
+          console.log(kwArgs);
+
           return parser.expressionToValue(parameter.expression, kwArgs);
         };
       } else if (parameter.type === "input") {

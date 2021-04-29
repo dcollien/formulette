@@ -76,7 +76,15 @@ export const Parameter: React.FC<ParameterProps> = ({
   };
 
   if (parameter.width) {
-    style.width = parameter.width + "px"; // TODO: styled component
+    if ((parameter.width + "").endsWith("%")) {
+      style.width = parameter.width;
+    } else {
+      style.width = parameter.width + "px"; // TODO: styled component
+    }
+  }
+
+  if (parameter.height) {
+    style.height = parameter.height + "px"; // TODO: styled component
   }
 
   if (isChoiceInputDefinition(parameter)) {
@@ -116,7 +124,12 @@ export const Parameter: React.FC<ParameterProps> = ({
     );
   } else if (parameter.inputType === "text") {
     return (
-      <textarea value={value as string} onChange={handleTextChange} title={name}></textarea>
+      <textarea 
+        style={style}
+        value={value as string}
+        onChange={handleTextChange}
+        title={name}
+      ></textarea>
     );
   } else {
     return <>undefined</>;

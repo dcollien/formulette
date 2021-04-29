@@ -16,7 +16,9 @@ Output:
     input: {
       type: "input",
       inputType: "text",
-      default: "Hello World"
+      default: "Hello World",
+      width: "100%",
+      height: 100
     },
 
     output: {

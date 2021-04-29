@@ -11,6 +11,7 @@ import { RandomInputDefinition, Values } from "../util/types";
 
 import quadratic from "./quadratic.txt";
 import rot13 from './rot13';
+import table from './table';
 
 export default {
   title: "Formulette",
@@ -153,3 +154,6 @@ $$ x = \eval{out} $$
 
 export const Rot13 = Template.bind({});
 Rot13.args = rot13;
+
+export const Table = Template.bind({});
+Table.args = table;
