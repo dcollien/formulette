@@ -31,10 +31,35 @@ export interface InputDefinition {
   values?: Array<number | string>;
 }
 
+
+export interface TextInputDefinition extends InputDefinition {
+  inputType: "text";
+  maxLength?: number;
+}
+
+
+export const isTextDefinition = (
+  defn: InputDefinition
+): defn is TextInputDefinition => defn.inputType === "text";
+export interface NumberInputDefinition extends InputDefinition {
+  inputType: "number";
+  range?: {
+    min: {
+      value: number;
+    };
+    max: {
+      value: number;
+    };
+  };
+}
+
+export const isNumberInputDefinition = (
+  defn: InputDefinition
+): defn is NumberInputDefinition => defn.inputType === "number";
 export interface RandomInputDefinition extends InputDefinition {
   inputType: "random";
   range?: {
-    type?: "integer" | "float",
+    type?: "integer" | "float";
     min: {
       value: number;
       inclusive?: boolean;
@@ -47,7 +72,6 @@ export interface RandomInputDefinition extends InputDefinition {
   values?: Array<number | string>;
   default?: number;
 }
-
 
 export const isRandomInputDefinition = (
   defn: InputDefinition
@@ -74,5 +98,5 @@ export type Values = Record<string, VariableValue>;
 export type Options = {
   nullLabel?: string;
   undefinedLabel?: string;
-  nanLabel?: string
+  nanLabel?: string;
 };

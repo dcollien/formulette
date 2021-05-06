@@ -12,11 +12,7 @@ const args: FormuletteProps = {
 
 \`\`\`vis
   layout: bar
-  data: [
-    { key: "Agnes", value: \${va1} },
-    { key: "Bob", value: \${va2} },
-    { key: "Colin", value: \${va3} },
-  ]
+  data: \${data}
 \`\`\`
 `,
   parameters: {
@@ -79,6 +75,10 @@ const args: FormuletteProps = {
     "va3": {
       type: "calculation",
       expression: "a3"
+    },
+    "data": {
+      type: "calculation",
+      expression: `chartdata(["Agnes", "Bob", "Colin"], [va1, va2, va3])`
     }
   }
 };

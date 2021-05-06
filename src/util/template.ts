@@ -1,10 +1,11 @@
 import { ExpressionParser } from "expressionparser";
 import katex from "katex";
 import MarkdownIt from "markdown-it";
+import markdownItMermaid from "@liradb2000/markdown-it-mermaid";
 import vis from "markvis";
 import * as d3 from "d3";
 
-import { Options, Parameters } from "./types";
+import { CalculationDefinition, Options, Parameters } from "./types";
 
 interface Context {
   consumeArgs: (numArgs: number) => { text: string }[][];
@@ -17,37 +18,58 @@ const fixLatex = (inLatex: string) =>
     .replace("\\begin{align}", "\\begin{aligned}")
     .replace("\\end{align}", "\\end{aligned}");
 
+const chartContainerHtml = `<div id="container"><div id="chart"></div></div>`;
+
 const md = new MarkdownIt({
   html: true,
   linkify: true,
-  typographer: true
-}).use(vis);
+  typographer: true,
+})
+  .use(vis)
+  .use(markdownItMermaid);
 
-export const renderEvaluation = (parser: ExpressionParser | undefined, expression: string, options?: Options): string => {
+export const renderEvaluation = (
+  parser: ExpressionParser | undefined,
+  term: string,
+  parameter: CalculationDefinition,
+  options?: Options
+): string => {
   if (!parser) throw new Error("Parser Uninitialised");
 
-  const evaluated = parser.expressionToValue(expression);
-  if (typeof evaluated === "string") {
-    return evaluated;
-  } else if (evaluated === null) {
-    return options?.nullLabel || "Null";
-  } else if (typeof(evaluated) === 'number' && isNaN(evaluated)) {
-    return options?.nanLabel || "NaN";
-  } else if (evaluated === undefined) {
-    return options?.undefinedLabel || "Undefined";
-  } else {
-    return JSON.stringify(evaluated);
+  try {
+    const evaluated = parser.expressionToValue(parameter.expression);
+    if (typeof evaluated === "string") {
+      return evaluated;
+    } else if (evaluated === null) {
+      return options?.nullLabel || "Null";
+    } else if (typeof evaluated === "number" && isNaN(evaluated)) {
+      return options?.nanLabel || "NaN";
+    } else if (evaluated === undefined) {
+      return options?.undefinedLabel || "Undefined";
+    } else {
+      return JSON.stringify(evaluated);
+    }
+  } catch (err) {
+    throw new Error(
+      `Unable to evaluate ${term} "${parameter.expression}": ${err.message}`
+    );
   }
 };
 
-export const evaluateTags = (html: string, parameters: Parameters, parser: ExpressionParser | undefined, options?: Options): string => {
+// Used for pure HTML, e.g. <code> tags
+export const evaluateTags = (
+  html: string,
+  parameters: Parameters,
+  parser: ExpressionParser | undefined,
+  options?: Options
+): string => {
   return html.replace(/<a href="#eval-(\w+)">\w+<\/a>/gm, (_match, name) => {
     const parameter = parameters[name];
-    
+
     if (!parameter || parameter.type !== "calculation") {
       throw new Error("Attempting to evaluate non-calculation");
     }
-    return renderEvaluation(parser, parameter.expression, options)
+    return renderEvaluation(parser, name, parameter, options);
   });
 };
 
@@ -76,7 +98,7 @@ export const initKatexMacros = (
     }
 
     if (parameter.type === "calculation") {
-      return renderEvaluation(parser, parameter.expression, options);
+      return renderEvaluation(parser, name, parameter, options);
     } else {
       return `\\href{#eval-${name}}{${name}}`;
     }
@@ -84,8 +106,8 @@ export const initKatexMacros = (
 
   return {
     "\\eval": template,
-    "\\$": template
-  }
+    "\\$": template,
+  };
 };
 
 type TextMacro = (name: string) => string;
@@ -102,10 +124,21 @@ export const initTextMacro = (
   }
 
   if (parameter.type === "calculation") {
-    return renderEvaluation(parser, parameter.expression, options);
+    return renderEvaluation(parser, name, parameter, options);
   } else {
     return `<a href="#eval-${name}">${name}</a>`;
   }
+};
+
+const enhanceKatexError = (err: string) => {
+  const commonDollar = "KaTeX parse error: Can't use function '$' in math mode";
+  let newErr = err.replace(
+    commonDollar,
+    `Can't use "$". Did you mean to use "\\$"? In math mode`
+  );
+
+  newErr = newErr.replace("KaTeX parse error:", "");
+  return newErr;
 };
 
 const renderTextSection = (
@@ -113,15 +146,22 @@ const renderTextSection = (
   katexMacros: KatexMacros,
   renderVariable: TextMacro
 ) => {
-  const inlineChunks = template.split(/\\\((.+)?\\\)/g);
+  const inlineChunks = template.split("\\(").join("\\)").split("\\)");
 
   for (let i = 0; i < inlineChunks.length; i++) {
     if (i % 2 !== 0) {
       // Render inline equation sections
-      inlineChunks[i] = katex.renderToString(fixLatex(inlineChunks[i]), {
-        macros: katexMacros,
-        trust: true,
-      });
+      try {
+        inlineChunks[i] = katex.renderToString(fixLatex(inlineChunks[i]), {
+          macros: katexMacros,
+          trust: true,
+        });
+      } catch (err) {
+        const message = enhanceKatexError(err.message);
+        throw new Error(
+          `Inline equation error in "\\(${inlineChunks[i]}\\)": ${message}`
+        );
+      }
     } else {
       // Render variables (or insert placeholders)
       inlineChunks[i] = inlineChunks[i].replace(
@@ -133,7 +173,11 @@ const renderTextSection = (
 
   // Markdown parse the document
   const renderedVariables = inlineChunks.join("");
-  return md.render(renderedVariables, { d3 });
+  return md.render(renderedVariables, {
+    d3,
+    container: chartContainerHtml,
+    colors: d3.schemeSet3,
+  });
 };
 
 // Render the template text to HTML, including equations and placeholders

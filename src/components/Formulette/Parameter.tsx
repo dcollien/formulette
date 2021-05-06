@@ -7,7 +7,9 @@ import {
   isChoiceInputDefinition,
   isRandomInputDefinition,
   ParameterDefinition,
-  Options
+  Options,
+  isNumberInputDefinition,
+  isTextDefinition
 } from "../../util/types";
 
 import { renderEvaluation } from "../../util/template";
@@ -36,12 +38,8 @@ export const Parameter: React.FC<ParameterProps> = ({
   if (parameter.type === "constant") {
     return <>{parameter.value + ""}</>;
   } else if (parameter.type === "calculation") {
-    try {
-      const evaluated = renderEvaluation(parser, parameter.expression, options);
-      return <>{evaluated}</>;
-    } catch (err) {
-      return <>?</>;
-    }
+    const evaluated = renderEvaluation(parser, name, parameter, options);
+    return <>{evaluated}</>;
   } else if (parameter.type ===  "function") {
     return <>{name}</>;
   }
@@ -56,7 +54,15 @@ export const Parameter: React.FC<ParameterProps> = ({
   };
 
   const handleTextChange = (evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    onChange(evt.currentTarget.value);
+    let value = evt.currentTarget.value;
+
+    if (isTextDefinition(parameter)) { 
+      if (parameter.maxLength && value !== undefined) {
+        value = value.slice(0, parameter.maxLength);
+      }
+    }
+
+    onChange(value);
   };
 
   const handleSelectChange = (evt: React.ChangeEvent<HTMLSelectElement>) => {
@@ -112,21 +118,32 @@ export const Parameter: React.FC<ParameterProps> = ({
         />
       </span>
     );
-  } else if (parameter.inputType === "number") {
+  } else if (isNumberInputDefinition(parameter)) {
+    let numValue = value !== undefined ? Number(value) : value;
+    if (parameter.range && numValue !== undefined) {
+      numValue = Math.max(numValue, parameter.range.max.value);
+      numValue = Math.min(numValue, parameter.range.min.value)
+    }
+
     return (
       <input
         type="number"
         style={style}
-        value={value?.toString()}
+        value={numValue?.toString()}
         onChange={handleNumberChange}
         title={name}
       ></input>
     );
-  } else if (parameter.inputType === "text") {
+  } else if (isTextDefinition(parameter)) {
+    let textValue = value as string;
+    if (parameter.maxLength && textValue !== undefined) {
+      textValue = textValue.slice(0, parameter.maxLength);
+    }
+
     return (
       <textarea 
         style={style}
-        value={value as string}
+        value={textValue}
         onChange={handleTextChange}
         title={name}
       ></textarea>

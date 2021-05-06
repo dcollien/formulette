@@ -12,6 +12,8 @@ import { RandomInputDefinition, Values } from "../util/types";
 import quadratic from "./quadratic.txt";
 import rot13 from './rot13';
 import table from './table';
+import binary from './binary';
+import flowchart from './flowchart';
 
 export default {
   title: "Formulette",
@@ -157,3 +159,9 @@ Rot13.args = rot13;
 
 export const Table = Template.bind({});
 Table.args = table;
+
+export const Binary = Template.bind({});
+Binary.args = binary;
+
+export const FlowChart = Template.bind({});
+FlowChart.args = flowchart;
