@@ -141,6 +141,45 @@ const enhanceKatexError = (err: string) => {
   return newErr;
 };
 
+const extractVariablesKatex = (katex:string) => {
+  const variables: Array<string> = [];
+
+  katex.replace(
+    /\\\$\{([^}]+)?\}/g,
+    (_match, p1) => {
+      variables.push(p1);
+      return '';
+    }
+  );
+
+  return variables;
+};
+
+const extractVariablesTextSection = (
+  template: string
+) => {
+  let variables: Array<string> = [];
+
+  const inlineChunks = template.split("\\(").join("\\)").split("\\)");
+
+  const replacer = (_match: string, p1: string) => {
+    variables.push(p1);
+    return '';
+  };
+
+  for (let i = 0; i < inlineChunks.length; i++) {
+    if (i % 2 !== 0) {
+      variables = variables.concat(extractVariablesKatex(inlineChunks[i]));
+    } else {
+      inlineChunks[i].replace(
+        /\$\{([^}]+)?\}/g,
+        replacer
+      );
+    }
+  }
+  return variables;
+}
+
 const renderTextSection = (
   template: string,
   katexMacros: KatexMacros,
@@ -179,6 +218,23 @@ const renderTextSection = (
     colors: d3.schemeSet3,
   });
 };
+
+export const extractVariables = (
+  template: string
+): Array<string> => {
+  let variables: Array<string> = [];
+  const blockChunks = template.split("$$");
+
+  for (let i = 0; i < blockChunks.length; i++) {
+    if (i % 2 === 0) {
+      variables = variables.concat(extractVariablesTextSection(blockChunks[i]));
+    } else {
+      variables = variables.concat(extractVariablesKatex(blockChunks[i]));
+    }
+  }
+
+  return variables;
+}
 
 // Render the template text to HTML, including equations and placeholders
 export const renderTemplate = (

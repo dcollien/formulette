@@ -22,9 +22,10 @@ export interface CalculationDefinition {
   expression: string;
 }
 
+export type InputType = "text" | "number" | "choice" | "random";
 export interface InputDefinition {
   type: "input";
-  inputType: "text" | "number" | "choice" | "random";
+  inputType: InputType;
   width?: number | string;
   height?: number;
   default?: number | string;
@@ -53,13 +54,17 @@ export interface NumberInputDefinition extends InputDefinition {
   };
 }
 
+export const isInputDefinition = (
+  defn: ParameterDefinition
+): defn is InputDefinition => defn.type === "input";
+
 export const isNumberInputDefinition = (
   defn: InputDefinition
 ): defn is NumberInputDefinition => defn.inputType === "number";
 export interface RandomInputDefinition extends InputDefinition {
   inputType: "random";
+  valueType?: "integer" | "float" | "string";
   range?: {
-    type?: "integer" | "float";
     min: {
       value: number;
       inclusive?: boolean;
@@ -79,6 +84,7 @@ export const isRandomInputDefinition = (
 
 export interface ChoiceInputDefinition extends InputDefinition {
   inputType: "choice";
+  valueType?: "integer" | "float" | "string";
   values: Array<number | string>;
 }
 

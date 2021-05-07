@@ -19,8 +19,8 @@ const args: FormuletteProps = {
     "a1": {
       type: "input",
       inputType: "random",
+      valueType: "integer",
       range: {
-        type: "integer",
         min: {
           value: 5
         },

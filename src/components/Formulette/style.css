@@ -20,7 +20,112 @@
   padding: 6px;
 }
 
-
 .formulette th {
   background-color: #eee;
+}
+
+.formulette-editor {
+  font-family: sans-serif;
+  width: 100%;
+}
+
+.formulette-editor .fte-expression-editor {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1.2rem;
+  height: 2rem;
+  padding: 0.3rem;
+}
+
+.formulette-editor .fte-parameter-table {
+  display: grid;
+  grid-template-columns: min-content auto;
+  border: 1px solid #f0f0f0;
+}
+
+.formulette-editor .fte-select-container select {
+  width: 120px;
+}
+
+.formulette-editor .fte-type-select {
+  padding: 5px;
+}
+
+.formulette-editor .fte-parameter-name {
+  padding-top: 6px;
+  padding-left: 6px;
+  padding-right: 16px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.formulette-editor .fte-parameter-component {
+  padding: 4px;
+}
+
+.formulette-editor .fte-parameter-table {
+  background-color: #fcfcfc;
+}
+
+.formulette-editor .fte-parameter-table > div:nth-child(4n + 1) {
+  background-color: #f0f0f0;
+}
+.formulette-editor .fte-parameter-table > div:nth-child(4n + 2) {
+  background-color: #f0f0f0;
+}
+.formulette-editor .fte-label {
+
+  background-color: #f0f0f0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #ffffff;
+  color: #444;
+  display: inline-block;
+  margin-top: 4px;
+  margin-left: 2px;
+  padding-top: 4px;
+  padding-left: 4px;
+  padding-right: 4px;
+  font-size: 0.9rem;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+.formulette-editor .fte-sidebyside {
+  display: inline-block;
+  padding-right: 8px;
+}
+
+.formulette-editor .fte-sidebyside input[type=text] {
+  width: 128px;
+}
+.formulette-editor .fte-sidebyside input[type=number] {
+  width: 128px;
+}
+
+.formulette-editor .fte-default-text {
+  width: 100%;
+  box-sizing: border-box;
+  height: 40px;
+}
+
+.formulette-editor .fte-options {
+  padding: 16px;
+}
+
+.formulette-editor .fte-parameter-delete {
+  margin-top: 20px;
+  float: right;
+}
+
+.formulette-editor .fte-add-parameter {
+  padding: 10px;
+  border: 1px solid #eee;
+}
+
+.formulette-editor .fte-add-parameter button {
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 4px;
 }

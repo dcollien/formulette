@@ -8,31 +8,33 @@
   "license": "MIT",
   "dependencies": {
     "@liradb2000/markdown-it-mermaid": "^0.4.2",
+    "@pathofdev/react-tag-input": "^1.0.7",
     "@types/d3": "^6.3.0",
     "@types/katex": "^0.11.0",
     "@types/markdown-it": "^12.0.1",
-    "@types/react": "^16.9.47",
+    "@types/react": "^17.0.5",
     "@types/react-html-parser": "^2.0.1",
+    "@uiw/react-monacoeditor": "^3.2.1",
     "d3": "^6.7.0",
     "expressionparser": "^1.1.5",
     "katex": "^0.12.0",
     "markdown-it": "^12.0.6",
     "markvis": "^0.0.12",
     "markvis-pie": "dcollien/markvis-pie#master",
-    "react": "^16.14.0",
+    "react": "^17.0.2",
     "react-html-parser": "https://github.com/dcollien/react-html-parser.git"
   },
   "devDependencies": {
     "@babel/core": "^7.11.4",
-    "@storybook/addon-actions": "^6.0.17",
-    "@storybook/addon-essentials": "^6.0.17",
-    "@storybook/addon-links": "^6.0.17",
-    "@storybook/node-logger": "^6.0.17",
-    "@storybook/preset-create-react-app": "^3.1.4",
-    "@storybook/react": "^6.0.17",
+    "@storybook/addon-actions": "^6.2.9",
+    "@storybook/addon-essentials": "^6.2.9",
+    "@storybook/addon-links": "^6.2.9",
+    "@storybook/node-logger": "^6.2.9",
+    "@storybook/preset-create-react-app": "^3.1.7",
+    "@storybook/react": "^6.2.9",
     "@typescript-eslint/eslint-plugin": "^3.10.1",
     "@typescript-eslint/parser": "^3.10.1",
-    "babel-loader": "^8.1.0",
+    "babel-loader": "^8.2.2",
     "eslint": "^7.7.0",
     "eslint-plugin-react": "^7.20.6",
     "raw-loader": "^4.0.2",
@@ -43,5 +45,9 @@
   "scripts": {
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
+  },
+  "peerDependencies": {
+    "react-dom": "^17.0.2",
+    "webpack": "^5.0.0"
   }
 }

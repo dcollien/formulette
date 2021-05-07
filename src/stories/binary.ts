@@ -2,20 +2,20 @@
 import { FormuletteProps } from "src/components/Formulette/Formulette";
 import { TextInputDefinition } from "src/util/types";
 
-const args: FormuletteProps = {
-  template: `
+const template = `
+
 # Decimal to Binary
 
 |               |                  |
 |:--------------|-----------------:|
-|Decimal value: | \${decimalInput} |
-|Binary value:  |\`\${bin}\`       |
+|Decimal value: | \${decimalInput}  |
+|Binary value:  |\`\${bin}\`          |
 
 
 Digits left-to-right are from the remainders, bottom-to-top:
 
-| Step | Value      | Calculation |
-|:-----|-----------:|------------:|
+| Step | Value        | Calculation                                                                                     |
+|:-----|-------------:|------------------------------------------------------------------------------------------------:|
 | 0    | \\( \\\${x0} \\) | \\( \\tfrac{\\\${x0}}{2} = \\textcolor{green}{\\\${x1}} \\text{ remainder } \\textcolor{blue}{\\\${d0}} \\) |
 | 2    | \\( \\\${x2} \\) | \\( \\tfrac{\\\${x2}}{2} = \\textcolor{green}{\\\${x3}} \\text{ remainder } \\textcolor{blue}{\\\${d2}} \\) |
 | 3    | \\( \\\${x3} \\) | \\( \\tfrac{\\\${x3}}{2} = \\textcolor{green}{\\\${x4}} \\text{ remainder } \\textcolor{blue}{\\\${d3}} \\) |
@@ -31,23 +31,26 @@ Digits left-to-right are from the remainders, bottom-to-top:
 
 |               |                  |
 |:--------------|-----------------:|
-|Binary value:  | \${binaryInput}  |
-|Decimal value: |\`\${dec}\`       |
+|Binary value:  | \${binaryInput}   |
+|Decimal value: |\`\${dec}\`          |
 
 Calculating vertically and adding up the bottom row:
 
 
-|         | \\(2^7\\) | \\(2^6\\) | \\(2^5\\) | \\(2^4\\) | \\(2^3\\) | \\(2^2\\) | \\(2^1\\) | \\(2^0\\) |   |
-|:--------|:---------:|:---------:|:---------:|:---------:|:---------:|:---------:|:---------:|:---------:|--:|
-| Powers of 2: | 128 | 64 | 32 | 16 | 8 | 4 | 2 | 0 |
-|         | \\(\\times\\) | \\(\\times\\) | \\(\\times\\) | \\(\\times\\) | \\(\\times\\) | \\(\\times\\) | \\(\\times\\) | \\(\\times\\) |
-| Digits: | \${b7}    |   \${b6}  |   \${b5}  |   \${b4}  |   \${b3}  |   \${b2}  |   \${b1}  |   \${b0}  |
-|         | \\(=\\)   | \\(=\\)   | \\(=\\)   | \\(=\\)   | \\(=\\)   | \\(=\\)   | \\(=\\)   | \\(=\\)   |
-|         | \${c7}    |   \${c6}  |   \${c5}  |   \${c4}  |   \${c3}  |   \${c2}  |   \${c1}  |   \${c0}  | 
-| Giving: |
-|         | \${c7} +  |   \${c6} +|   \${c5} +|   \${c4} +|   \${c3} +|   \${c2} +|   \${c1} +|   \${c0}  | \\( = \\\${dec} \\) |
+|              | \\(2^7\\)    | \\(2^6\\)    | \\(2^5\\)    | \\(2^4\\)    | \\(2^3\\)    | \\(2^2\\)    | \\(2^1\\)    | \\(2^0\\)    |                 |
+|:-------------|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|----------------:|
+| Powers of 2: | 128        | 64         | 32         | 16         | 8          | 4          | 2          | 0          |                 |
+|              | \\(\\times\\) | \\(\\times\\) | \\(\\times\\) | \\(\\times\\) | \\(\\times\\) | \\(\\times\\) | \\(\\times\\) | \\(\\times\\) |                 |
+| Digits:      | \${b7}      |   \${b6}    |   \${b5}    |   \${b4}    |   \${b3}    |   \${b2}    |   \${b1}    |   \${b0}    |                 |
+|              | \\(=\\)      | \\(=\\)      | \\(=\\)      | \\(=\\)      | \\(=\\)      | \\(=\\)      | \\(=\\)      | \\(=\\)      |                 |
+|              | \${c7}      |   \${c6}    |   \${c5}    |   \${c4}    |   \${c3}    |   \${c2}    |   \${c1}    |   \${c0}    |                 | 
+| Giving:      |            |            |            |            |            |            |            |            |                 |
+|              | \${c7} +    |   \${c6} +  |   \${c5} +  |   \${c4} +  |   \${c3} +  |   \${c2} +  |   \${c1} +  |   \${c0}    | \\( = \\\${dec} \\) |
+`;
 
-  `,
+
+const args: FormuletteProps = {
+  template,
   parameters: {
     "decimalInput": {
       "type": "input",

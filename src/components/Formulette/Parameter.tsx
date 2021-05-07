@@ -129,7 +129,7 @@ export const Parameter: React.FC<ParameterProps> = ({
       <input
         type="number"
         style={style}
-        value={numValue?.toString()}
+        value={numValue?.toString() || ""}
         onChange={handleNumberChange}
         title={name}
       ></input>

@@ -15,11 +15,11 @@ export const Spinner: React.FC<SpinnerProps> = ({
   const onClick = () => {
     const p = Math.random();
 
-    if (parameter.range) {
+    if (parameter.range && parameter.valueType !== "string") {
       let max = parameter.range.max.value;
       let min = parameter.range.min.value;
 
-      if (parameter.range.type === "integer") {
+      if (parameter.valueType === "integer") {
         const isMaxInclusive = parameter.range.max.inclusive === undefined ? false : parameter.range.max.inclusive;
         const isMinInclusive = parameter.range.min.inclusive === undefined ? true  : parameter.range.min.inclusive;
 
