@@ -67,7 +67,7 @@ export const Parameter: React.FC<ParameterProps> = ({
 
   const handleSelectChange = (evt: React.ChangeEvent<HTMLSelectElement>) => {
     const index = Number(evt.currentTarget.selectedIndex);
-    if (isChoiceInputDefinition(parameter)) {
+    if (isChoiceInputDefinition(parameter) && parameter.values !== undefined) {
       onChange(parameter.values[index]);
     }
   };
@@ -101,7 +101,7 @@ export const Parameter: React.FC<ParameterProps> = ({
         value={value as string | number}
         title={name}
       >
-        {parameter.values.map((val: string | number, i: number) => (
+        {(parameter.values || []).map((val: string | number, i: number) => (
           <option key={i} value={val}>
             {val}
           </option>
