@@ -14,8 +14,8 @@ export interface EditorProps {
   parameters: Parameters;
   options: Options;
   onTemplateChange?: (template: string) => void;
-  onParameterChange?: ChangeHandler<Parameters>;
   onOptionChange?: ChangeHandler<Options>;
+  onParametersChange?: (params: Parameters) => void;
   onError?: (err: Error) => void;
 }
 
@@ -24,8 +24,8 @@ export const Editor: React.FC<EditorProps> = ({
   parameters,
   options,
   onTemplateChange,
-  onParameterChange,
   onOptionChange,
+  onParametersChange,
   onError,
 }: EditorProps) => {
   const [currTemplate, setTemplate] = useState<string>(template);
@@ -47,15 +47,35 @@ export const Editor: React.FC<EditorProps> = ({
   });
   
   const onScan = () => {
+    const newParameters: Parameters = {};
+    
     variables.forEach((name) => {
       if (!(name in parameters)) {
-        onParameterChange && onParameterChange(name,  {
+        newParameters[name] = {
           type: "input",
           inputType: "number"
-        });
+        };
       }
     });
+
+    onParametersChange && onParametersChange({ ...parameters, ...newParameters})
   };
+
+  const onParameterChange: ChangeHandler<Parameters> = (name, value) => {
+    const newParameters: Parameters = {...parameters};
+    if (value === undefined) {
+      delete newParameters[name];
+      console.log("DELETED", name, newParameters);
+      onParametersChange && onParametersChange({
+        ...newParameters
+      });
+    } else {
+      onParametersChange && onParametersChange({
+        ...newParameters,
+        [name]: value,
+      });
+    }
+  }
 
   return <div className="formulette-editor">
     <TemplateEditor template={template} onTemplateChange={templateChangeHandler}/>

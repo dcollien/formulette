@@ -53,7 +53,7 @@ export const FunctionParameter: React.FC<ParameterProps> = ({
     <div>
       <label className="fte-label">Arguments:</label>
       <ReactTagInput
-        placeholder="Argument"
+        placeholder="Argument (press enter for each argument)"
         tags={currArgs}
         onChange={onTagChange}
         validator={onTagValidate}

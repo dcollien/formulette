@@ -6,10 +6,8 @@ import quadratic from "./quadratic";
 import rot13 from './rot13';
 
 import {
-  ChoiceInputDefinition,
   Options,
   Parameters,
-  RandomInputDefinition,
   Values,
 } from "../util/types";
 
@@ -47,20 +45,7 @@ const Template: Story<{
     });
   };
 
-  const onParameterChange: ChangeHandler<Parameters> = (name, value) => {
-    if (value === undefined) {
-      delete params[name];
-      console.log("DELETED", name, params);
-      setParams({
-        ...params
-      });
-    } else {
-      setParams({
-        ...params,
-        [name]: value,
-      });
-    }
-  };
+  const onParametersChange = (updatedParams: Parameters) => setParams(updatedParams);
 
   const onTemplateChange = (value: string) => {
     setTemplate(value);
@@ -111,7 +96,7 @@ const Template: Story<{
         template={template}
         parameters={params}
         onOptionChange={onOptionChange}
-        onParameterChange={onParameterChange}
+        onParametersChange={onParametersChange}
         onTemplateChange={onTemplateChange}
         onError={onError}
       />
